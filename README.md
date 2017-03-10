@@ -1,4 +1,4 @@
-# Pong Alone # 
+# Pong Alone
 
 Projeto de conclusão do curso HTML5 com Games da Linked Education.
 
