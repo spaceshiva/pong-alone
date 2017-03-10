@@ -1,0 +1,17 @@
+/* um canvas em cima do outro */
+canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: transparent;
+    background-color: #000000;
+}
+#background {
+    z-index: -2;
+}
+#main {
+    z-index: -1;
+}
+#bar {
+    z-index: 0;
+}

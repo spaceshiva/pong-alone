@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pong Alone: A HTML5 Game</title>
+    <link href="game.css" rel="stylesheet" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+</head>
+
+<body>
+    <!-- os tamanhos do canvas devem ser colocados explicitamente e não no CSS -->
+    <!-- O "fundo" estrelado do nosso game -->
+    <canvas id="background" width="480" height="320">
+        Your browser does not support canvas. Please try again with a different browser.
+    </canvas>
+    <!-- O cenário principal onde mantemos as paredes e a nossa bolinha -->
+    <canvas id="main" width="480" height="320">
+    </canvas>
+    <!-- A barra de defesa -->
+    <canvas id="bar" width="480" height="320">
+    </canvas>
+    <script src="util.js" type="text/javascript"></script>
+    <script src="game.js" type="text/javascript"></script>
+</body>
+
+</html>
