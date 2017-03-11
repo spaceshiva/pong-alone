@@ -11,6 +11,22 @@ const STATES = {
     PAUSE: 3,
     OVER: 4
 }
+
+const BALL_DIRECTION = {
+
+}
+
+const BALL_STATE = {
+    INIT : 0,
+    MOVING : 1,
+    DEAD : 2,
+}
+
+const INIT_VAL = {
+    BALL_SPEED : 5,
+    PADDLE_SPEED : 7
+}
+
 // Estado atual do game
 var GAME_STATE = STATES.INIT;
 // Singleton do repositório
@@ -91,27 +107,67 @@ function Drawable(x, y, ctx) {
 }
 
 function Ball(x, y, ctx) {
-  this.draw = function(){}
-  this.move = function(){}
+  Drawable.call(this, x, y, ctx);
+  this.speed = INIT_VAL.BALL_SPEED;
+  this.state = BALL_STATE.INIT;
+  this.draw = function(){
+    this.context.drawImage(IMAGE_REPO.ball, this.pos.x, this.pos.y);
+  }
+  this.move = function(){
+    this.context.clearRect(this.pos.x, this.pos.y, this.width, this.height);
+    if(this.state === BALL_STATE.INIT) {
+      this.pos.y = (el.paddle.pos.y + (el.paddle.height / 2)) - (this.height / 2);
+    }
+  }
 }
 Ball.prototype = new Drawable();
 
 function Paddle(x, y, ctx) {
-  this.draw = function(){}
-  this.move = function(){}
+  Drawable.call(this, x, y, ctx);
+  this.speed = INIT_VAL.PADDLE_SPEED;
+
+  this.draw = function(){
+    this.context.drawImage(IMAGE_REPO.paddle, this.pos.x, this.pos.y);
+  }
+
+  this.move = function(){
+    // reagimos apenas para cima e para baixo
+    if (KEY_STATUS.up || KEY_STATUS.down) {
+      this.context.clearRect(this.pos.x, this.pos.y, this.width, this.height);
+      if(KEY_STATUS.up) {
+        this.pos.y -= this.speed;
+        if(this.pos.y <= 0) {
+          this.pos.y = 0;
+        }
+      } else {
+        this.pos.y += this.speed;
+        if((this.pos.y + this.height) >= this.canvasHeight) {
+          this.pos.y = this.canvasHeight - this.height;
+        }
+      }
+    }
+  }
 }
 Paddle.prototype = new Drawable();
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Controle do Game
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+function update() {
+  el.paddle.move();
+  el.ball.move();
+}
+
+function draw() {
+  el.paddle.draw();
+  el.ball.draw();
+}
+
 function the_loop() {
     GAME_STATE = STATES.PLAYING;
-    console.log("elements", el);
-    el.ball.move();
-    el.paddle.move();
-    el.ball.draw();
-    el.paddle.draw();
+    update();
+    draw();
+    requestAnimFrame(the_loop);
 }
 
 function init() {
@@ -123,10 +179,26 @@ function init() {
       return false;
     }
 
-    var paddle = new Paddle(0, 0, paddleCanvas.getContext('2d'));
-    var ball = new Ball(0, 0, mainCanvas.getContext('2d'));
+    var paddle = new Paddle(
+      IMAGE_REPO.paddle.width * 3,
+      (mainCanvas.height / 2) - (IMAGE_REPO.paddle.height / 2),
+      paddleCanvas.getContext('2d'));
+    paddle.width = IMAGE_REPO.paddle.width;
+    paddle.height = IMAGE_REPO.paddle.height;
+    paddle.canvasWidth = paddleCanvas.width;
+    paddle.canvasHeight = paddleCanvas.height;
+
+    var ball = new Ball(
+      paddle.pos.x + IMAGE_REPO.ball.height,
+      (mainCanvas.height / 2) - (IMAGE_REPO.ball.height / 2),
+      mainCanvas.getContext('2d'));
+    ball.width = IMAGE_REPO.ball.width;
+    ball.height = IMAGE_REPO.ball.height;
+    ball.canvasWidth = mainCanvas.width;
+    ball.canvasHeight = mainCanvas.height;
 
     el = {paddle : paddle, ball : ball};
+    return true;
 }
 
 function loadGame() {

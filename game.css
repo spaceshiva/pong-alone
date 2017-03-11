@@ -4,10 +4,10 @@ canvas {
     top: 0px;
     left: 0px;
     background: transparent;
-    background-color: #000000;
 }
 #background {
     z-index: -2;
+    background-color: #000000;
 }
 #main {
     z-index: -1;
