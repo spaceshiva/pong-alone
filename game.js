@@ -13,7 +13,14 @@ const STATES = {
 }
 
 const BALL_DIRECTION = {
-
+    UP_LEFT : 0, // y (-) x (-)
+    UP_RIGHT : 1, // y (-) x (+)
+    DOWN_LEFT : 2, // y (+) x (-)
+    DOWN_RIGHT : 3 // y (+) x (+)
+    /*UP: 0, // y (-)
+    DOWN : 1, // y (+)
+    LEFT : 2, // x (-)
+    RIGHT : 3, // x (+)*/
 }
 
 const BALL_STATE = {
@@ -23,8 +30,13 @@ const BALL_STATE = {
 }
 
 const INIT_VAL = {
-    BALL_SPEED : 5,
+    BALL_SPEED : 3,
     PADDLE_SPEED : 7
+}
+
+const BOUND = {
+    MAX_X : 480,
+    MAX_Y : 320
 }
 
 // Estado atual do game
@@ -77,23 +89,8 @@ function ImageRepository() {
     }
 }
 
-function Vector(x, y) {
-    this.x = x;
-    this.y = y;
-
-    this.magnitude = function() {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-    }
-
-    this.normalize = function() {
-        var mag = this.magnitude();
-        this.x = this.x / mag;
-        this.y = this.y / mag;
-    }
-}
-
 function Drawable(x, y, ctx) {
-    this.pos = new Vector(x, y);
+    this.pos = new Vectors.Vector(x, y);
     this.speed = 0;
     this.canvasWidth = 0;
     this.canvasHeight = 0;
@@ -114,9 +111,59 @@ function Ball(x, y, ctx) {
     this.context.drawImage(IMAGE_REPO.ball, this.pos.x, this.pos.y);
   }
   this.move = function(){
-    this.context.clearRect(this.pos.x, this.pos.y, this.width, this.height);
-    if(this.state === BALL_STATE.INIT) {
-      this.pos.y = (el.paddle.pos.y + (el.paddle.height / 2)) - (this.height / 2);
+    this.context.clearRect(this.pos.x-1, this.pos.y-1, this.width+2, this.height+2);
+    if(this.state === BALL_STATE.INIT || this.state === BALL_STATE.DEAD) {
+      this.pos.y = getRandom(0, BOUND.MAX_Y);
+      this.pos.x = getRandom(BOUND.MAX_X / 2, BOUND.MAX_X);
+      this.direction = getRandom(BALL_DIRECTION.UP_LEFT, BALL_DIRECTION.DOWN_RIGHT);
+      this.state = BALL_STATE.MOVING;
+    }
+    if(this.state === BALL_STATE.MOVING) {
+      // check boundaries
+      if(this.pos.x >= BOUND.MAX_X) {
+        if(this.direction === BALL_DIRECTION.UP_RIGHT) {
+          this.direction = BALL_DIRECTION.UP_LEFT;
+        } else if (this.direction === BALL_DIRECTION.DOWN_RIGHT) {
+          this.direction = BALL_DIRECTION.DOWN_LEFT;
+        }
+      }
+      if(this.pos.y <= 0) {
+        if(this.direction === BALL_DIRECTION.UP_LEFT) {
+          this.direction = BALL_DIRECTION.DOWN_LEFT;
+        } else if (this.direction === BALL_DIRECTION.UP_RIGHT) {
+          this.direction = BALL_DIRECTION.DOWN_RIGHT;
+        }
+      }
+      if(this.pos.y >= BOUND.MAX_Y) {
+        if(this.direction === BALL_DIRECTION.DOWN_LEFT) {
+          this.direction = BALL_DIRECTION.UP_LEFT;
+        } else if(this.direction === BALL_DIRECTION.DOWN_RIGHT) {
+          this.direction = BALL_DIRECTION.UP_RIGHT;
+        }
+      }
+      if(this.pos.x <= 0) {
+        this.state = BALL_STATE.DEAD;
+      }
+      // moving
+      var v = Vectors.diagonal(45, this.speed);
+      switch (this.direction) {
+        case BALL_DIRECTION.UP_LEFT:
+          this.pos.y -= v.y;
+          this.pos.x -= v.x;
+          break;
+        case BALL_DIRECTION.UP_RIGHT:
+          this.pos.y -= v.y;
+          this.pos.x += v.x;
+          break;
+        case BALL_DIRECTION.DOWN_LEFT:
+          this.pos.y += v.y;
+          this.pos.x -= v.x;
+          break;
+        case BALL_DIRECTION.DOWN_RIGHT:
+          this.pos.y += v.y;
+          this.pos.x += v.x;
+          break;
+      }
     }
   }
 }
