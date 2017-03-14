@@ -17,10 +17,6 @@ const BALL_DIRECTION = {
     UP_RIGHT : 1, // y (-) x (+)
     DOWN_LEFT : 2, // y (+) x (-)
     DOWN_RIGHT : 3 // y (+) x (+)
-    /*UP: 0, // y (-)
-    DOWN : 1, // y (+)
-    LEFT : 2, // x (-)
-    RIGHT : 3, // x (+)*/
 }
 
 const BALL_STATE = {
@@ -30,7 +26,7 @@ const BALL_STATE = {
 }
 
 const INIT_VAL = {
-    BALL_SPEED : 3,
+    BALL_SPEED : 5,
     PADDLE_SPEED : 7
 }
 
@@ -90,6 +86,7 @@ function ImageRepository() {
 }
 
 function Drawable(x, y, ctx) {
+    var self = this;
     this.pos = new Vectors.Vector(x, y);
     this.speed = 0;
     this.canvasWidth = 0;
@@ -97,6 +94,10 @@ function Drawable(x, y, ctx) {
     this.width = 0;
     this.height = 0;
     this.context = ctx;
+
+    this.maxPos = function() {
+      return new Vectors.Vector(self.pos.x + self.width, self.pos.y + self.height);
+    }
 
     // funções abstratas que serão implementadas pelos elementos
     this.draw = function() {};
@@ -119,31 +120,6 @@ function Ball(x, y, ctx) {
       this.state = BALL_STATE.MOVING;
     }
     if(this.state === BALL_STATE.MOVING) {
-      // check boundaries
-      if(this.pos.x >= BOUND.MAX_X) {
-        if(this.direction === BALL_DIRECTION.UP_RIGHT) {
-          this.direction = BALL_DIRECTION.UP_LEFT;
-        } else if (this.direction === BALL_DIRECTION.DOWN_RIGHT) {
-          this.direction = BALL_DIRECTION.DOWN_LEFT;
-        }
-      }
-      if(this.pos.y <= 0) {
-        if(this.direction === BALL_DIRECTION.UP_LEFT) {
-          this.direction = BALL_DIRECTION.DOWN_LEFT;
-        } else if (this.direction === BALL_DIRECTION.UP_RIGHT) {
-          this.direction = BALL_DIRECTION.DOWN_RIGHT;
-        }
-      }
-      if(this.pos.y >= BOUND.MAX_Y) {
-        if(this.direction === BALL_DIRECTION.DOWN_LEFT) {
-          this.direction = BALL_DIRECTION.UP_LEFT;
-        } else if(this.direction === BALL_DIRECTION.DOWN_RIGHT) {
-          this.direction = BALL_DIRECTION.UP_RIGHT;
-        }
-      }
-      if(this.pos.x <= 0) {
-        this.state = BALL_STATE.DEAD;
-      }
       // moving
       var v = Vectors.diagonal(45, this.speed);
       switch (this.direction) {
@@ -163,6 +139,43 @@ function Ball(x, y, ctx) {
           this.pos.y += v.y;
           this.pos.x += v.x;
           break;
+      }
+      // check boundaries
+      if(this.pos.x <= 0) {
+        this.state = BALL_STATE.DEAD;
+        return;
+      }
+      if(this.pos.x >= BOUND.MAX_X) {
+        if(this.direction === BALL_DIRECTION.UP_RIGHT) {
+          this.direction = BALL_DIRECTION.UP_LEFT;
+        } else if (this.direction === BALL_DIRECTION.DOWN_RIGHT) {
+          this.direction = BALL_DIRECTION.DOWN_LEFT;
+        }
+        return;
+      }
+      if(this.pos.y <= 0) {
+        if(this.direction === BALL_DIRECTION.UP_LEFT) {
+          this.direction = BALL_DIRECTION.DOWN_LEFT;
+        } else if (this.direction === BALL_DIRECTION.UP_RIGHT) {
+          this.direction = BALL_DIRECTION.DOWN_RIGHT;
+        }
+        return;
+      }
+      if(this.pos.y >= BOUND.MAX_Y) {
+        if(this.direction === BALL_DIRECTION.DOWN_LEFT) {
+          this.direction = BALL_DIRECTION.UP_LEFT;
+        } else if(this.direction === BALL_DIRECTION.DOWN_RIGHT) {
+          this.direction = BALL_DIRECTION.UP_RIGHT;
+        }
+        return;
+      }
+
+      if(Vectors.checkCollision(el.paddle.pos, el.paddle.maxPos(), this.pos, this.maxPos())) {
+        if(this.direction === BALL_DIRECTION.DOWN_LEFT) {
+          this.direction = BALL_DIRECTION.DOWN_RIGHT;
+        } else if(this.direction === BALL_DIRECTION.UP_LEFT) {
+          this.direction =  BALL_DIRECTION.UP_RIGHT;
+        }
       }
     }
   }

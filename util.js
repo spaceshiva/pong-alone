@@ -45,7 +45,7 @@ document.onkeyup = function(e) {
 
 window.getRandom = function(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
-};
+}
 
 /**
  * Função para recuperar o frame de animação utilizada durante o loop do game.
