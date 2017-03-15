@@ -52,10 +52,10 @@ const GAME = {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 function the_loop() {
-    if (GAME.state === STATES.PLAYING ||
-        GAME.state === STATES.PAUSE) {
+    if (GAME.state === STATES.PLAYING || GAME.state === STATES.PAUSE) {
         GAME.scenes.mainScene.update();
         GAME.scenes.mainScene.draw();
+        GAME.state = GAME.scenes.mainScene.state;
     }
 
     requestAnimFrame(the_loop);

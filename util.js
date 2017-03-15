@@ -5,6 +5,11 @@ KEY_CODES = {
     38: 'up',
     39: 'right',
     40: 'down',
+    80: 'pause'
+}
+
+KEY_CODES_DOWN = {
+  80: 'pause'
 }
 
 /**
@@ -13,9 +18,11 @@ KEY_CODES = {
  * status da tecla.
  */
 KEY_STATUS = {};
+
 for (code in KEY_CODES) {
     KEY_STATUS[KEY_CODES[code]] = false;
 }
+
 
 /**
  * Adiciona ao document o evento de keydown para mudar o status das teclas pressionadas pelo
@@ -29,6 +36,7 @@ document.onkeydown = function(e) {
         e.preventDefault();
         KEY_STATUS[KEY_CODES[keyCode]] = true;
     }
+    console.log("down: %s", keyCode);
 }
 
 /**
@@ -41,6 +49,7 @@ document.onkeyup = function(e) {
         e.preventDefault();
         KEY_STATUS[KEY_CODES[keyCode]] = false;
     }
+    console.log("up: %s", keyCode);
 }
 
 window.getRandom = function(min, max) {
