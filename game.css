@@ -1,9 +1,15 @@
+@font-face {
+  font-family: "press_start";
+  src: url("./assets/PressStart2P.ttf");
+}
+
 /* um canvas em cima do outro */
 canvas {
     position: absolute;
     top: 0px;
     left: 0px;
     background: transparent;
+    font-family: "press_start";
 }
 #background {
     z-index: -2;
