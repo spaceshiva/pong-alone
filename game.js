@@ -9,7 +9,8 @@ const STATES = {
     ASSETS_LOADED: 1,
     PLAYING: 2,
     PAUSE: 3,
-    OVER: 4
+    OVER: 4,
+    CONTINUE: 5
 }
 
 const BALL_DIRECTION = {
@@ -30,7 +31,7 @@ const INIT_VAL = {
     PADDLE_SPEED: 7,
     PADDLE_SCORE: 100,
     LIVES: 3,
-    SCORE: 900,
+    SCORE: 0,
     LEVEL: 1
 }
 
@@ -52,11 +53,34 @@ const GAME = {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 function the_loop() {
     GAME.scenes.mainScene.update();
-    GAME.scenes.mainScene.draw();
     GAME.scenes.pauseScene.update();
+    GAME.scenes.gameOverScene.update();
+
+    GAME.scenes.mainScene.draw();
     GAME.scenes.pauseScene.draw();
+    GAME.scenes.gameOverScene.draw();
+
+    if(GAME.state === STATES.CONTINUE) {
+      update_game_state(STATES.PLAYING);
+    }
+
+    if(GAME.scenes.mainScene.scoreBoard.lives === 0) {
+      update_game_state(STATES.OVER);
+    }
+
+    if(GAME.scenes.gameOverScene.continue) {
+      update_game_state(STATES.CONTINUE);
+      reset();
+    }
 
     requestAnimFrame(the_loop);
+}
+
+function reset() {
+    GAME.scenes.mainScene.scoreBoard.lives = INIT_VAL.LIVES;
+    GAME.scenes.mainScene.scoreBoard.score = INIT_VAL.SCORE;
+    GAME.scenes.mainScene.scoreBoard.level = INIT_VAL.LEVEL;
+    GAME.scenes.mainScene.ball.speed = INIT_VAL.BALL_SPEED;
 }
 
 // uma forma de "avisar" as cenas de que o estado mudou
@@ -65,6 +89,7 @@ function update_game_state(state) {
     GAME.state = state;
     GAME.scenes.mainScene.state = state;
     GAME.scenes.pauseScene.state = state;
+    GAME.scenes.gameOverScene.state = state;
 }
 
 /**
@@ -76,8 +101,10 @@ function add_pause_handler() {
         if (keyCode === 80) {
             if (GAME.state === STATES.PAUSE) {
                 update_game_state(STATES.PLAYING);
+                console.log("unpause");
             } else if (GAME.state === STATES.PLAYING) {
                 update_game_state(STATES.PAUSE);
+                console.log("pause");
             }
         }
     }, false);
@@ -120,14 +147,16 @@ function init() {
     scoreBoard.canvasHeight = mainCanvas.height;
 
     var mainScene = new MainScene(ball, paddle, scoreBoard);
-    mainScene.state = STATES.PLAYING;
 
     GAME.scenes = {
         mainScene: mainScene,
-        pauseScene: new PauseScene(mainContext, mainCanvas)
+        pauseScene: new PauseScene(mainContext, mainCanvas),
+        gameOverScene: new GameOverScene(mainContext, mainCanvas)
     }
 
-    this.add_pause_handler();
+    reset();
+    update_game_state(STATES.PLAYING);
+    add_pause_handler();
 
     return true;
 }
