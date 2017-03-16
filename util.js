@@ -4,12 +4,7 @@ KEY_CODES = {
     37: 'left',
     38: 'up',
     39: 'right',
-    40: 'down',
-    80: 'pause'
-}
-
-KEY_CODES_DOWN = {
-  80: 'pause'
+    40: 'down'
 }
 
 /**

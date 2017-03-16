@@ -50,13 +50,37 @@ const GAME = {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Controle do Game
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 function the_loop() {
-    if (GAME.state === STATES.PLAYING) {
-        GAME.scenes.mainScene.update();
-        GAME.scenes.mainScene.draw();
-    }
+    GAME.scenes.mainScene.update();
+    GAME.scenes.mainScene.draw();
+    GAME.scenes.pauseScene.update();
+    GAME.scenes.pauseScene.draw();
+
     requestAnimFrame(the_loop);
+}
+
+// uma forma de "avisar" as cenas de que o estado mudou
+// a forma "correta" seria a implementação dos listeners de eventos dentro das cenas.
+function update_game_state(state) {
+    GAME.state = state;
+    GAME.scenes.mainScene.state = state;
+    GAME.scenes.pauseScene.state = state;
+}
+
+/**
+* O tratamento do pause deve ser feito de maneira diferenciada do KEY_STATUS
+*/
+function add_pause_handler() {
+    window.addEventListener('keyup', function(e) {
+        var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
+        if (keyCode === 80) {
+            if (GAME.state === STATES.PAUSE) {
+                update_game_state(STATES.PLAYING);
+            } else if (GAME.state === STATES.PLAYING) {
+                update_game_state(STATES.PAUSE);
+            }
+        }
+    }, false);
 }
 
 function init() {
@@ -99,8 +123,11 @@ function init() {
     mainScene.state = STATES.PLAYING;
 
     GAME.scenes = {
-        mainScene: mainScene
+        mainScene: mainScene,
+        pauseScene: new PauseScene(mainContext, mainCanvas)
     }
+
+    this.add_pause_handler();
 
     return true;
 }
