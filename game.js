@@ -30,7 +30,7 @@ const INIT_VAL = {
     PADDLE_SPEED: 7,
     PADDLE_SCORE: 100,
     LIVES: 3,
-    SCORE: 0,
+    SCORE: 900,
     LEVEL: 1
 }
 
@@ -52,12 +52,10 @@ const GAME = {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 function the_loop() {
-    if (GAME.state === STATES.PLAYING || GAME.state === STATES.PAUSE) {
+    if (GAME.state === STATES.PLAYING) {
         GAME.scenes.mainScene.update();
         GAME.scenes.mainScene.draw();
-        GAME.state = GAME.scenes.mainScene.state;
     }
-
     requestAnimFrame(the_loop);
 }
 

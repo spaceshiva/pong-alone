@@ -31,9 +31,8 @@ function ScoreBoard(x, y, ctx) {
               this.score = 10000;
               return;
             }
-            
+
             var nextLevel = parseInt(this.score / 1000, 10) + 1;
-            this.levelUp = false;
             if (nextLevel > this.level) {
                 this.level = nextLevel;
                 this.levelUp = true;
@@ -61,6 +60,7 @@ function ScoreBoard(x, y, ctx) {
     // na atualização do frame, jogamos os pontos acumulados para o placar
     this.update = function() {
         ctx.clearRect(0, 0, this.width, this.height);
+        this.levelUp = false;
     }
 }
 ScoreBoard.prototype = new Drawable();

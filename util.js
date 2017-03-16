@@ -36,7 +36,6 @@ document.onkeydown = function(e) {
         e.preventDefault();
         KEY_STATUS[KEY_CODES[keyCode]] = true;
     }
-    console.log("down: %s", keyCode);
 }
 
 /**
@@ -49,7 +48,6 @@ document.onkeyup = function(e) {
         e.preventDefault();
         KEY_STATUS[KEY_CODES[keyCode]] = false;
     }
-    console.log("up: %s", keyCode);
 }
 
 window.getRandom = function(min, max) {
