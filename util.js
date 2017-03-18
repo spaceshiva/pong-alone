@@ -1,3 +1,7 @@
+/**
+* Funções que "deveriam" estar disponíveis no sistema. :D
+*/
+
 // Keycode mapeados quando o jogador pressionar uma tecla.
 KEY_CODES = {
     32: 'space',

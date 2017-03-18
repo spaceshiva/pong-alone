@@ -66,14 +66,14 @@ function ScoreBoard(x, y, ctx) {
 ScoreBoard.prototype = new Drawable();
 
 
-function Ball(x, y, ctx, paddle) {
+function Ball(x, y, ctx, image, paddle) {
     Drawable.call(this, x, y, ctx);
     this.paddleCollision = false;
     this.paddle = paddle;
     this.speed = INIT_VAL.BALL_SPEED;
     this.state = BALL_STATE.INIT;
     this.draw = function() {
-        this.context.drawImage(IMAGE_REPO.ball, this.pos.x, this.pos.y);
+        this.context.drawImage(image, this.pos.x, this.pos.y);
     }
     this.update = function() {
         this.context.clearRect(this.pos.x - 1, this.pos.y - 1, this.width + 2, this.height + 2);
@@ -150,12 +150,12 @@ function Ball(x, y, ctx, paddle) {
 }
 Ball.prototype = new Drawable();
 
-function Paddle(x, y, ctx) {
+function Paddle(x, y, ctx, image) {
     Drawable.call(this, x, y, ctx);
     this.speed = INIT_VAL.PADDLE_SPEED;
 
     this.draw = function() {
-        this.context.drawImage(IMAGE_REPO.paddle, this.pos.x, this.pos.y);
+        this.context.drawImage(image, this.pos.x, this.pos.y);
     }
 
     this.update = function() {
