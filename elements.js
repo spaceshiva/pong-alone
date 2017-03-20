@@ -59,7 +59,7 @@ function ScoreBoard(x, y, ctx) {
     }
     // na atualização do frame, jogamos os pontos acumulados para o placar
     this.update = function() {
-        ctx.clearRect(0, 0, this.width, this.height);
+        ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.levelUp = false;
     }
 }

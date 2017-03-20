@@ -56,12 +56,15 @@ function Game(imageRepo) {
         var paddleCanvas = document.getElementById("paddle");
         var mainCanvas = document.getElementById("main");
         var bgCanvas = document.getElementById("background");
+        var scoreCanvas = document.getElementById("score");
+
         if (!bgCanvas.getContext) {
             console.warn("O navegador não suporta canvas, desculpe");
             return false;
         }
 
         var mainContext = mainCanvas.getContext('2d');
+        var scoreContext = scoreCanvas.getContext('2d');
 
         var paddle = new Paddle(
             assets.paddle.width * 3,
@@ -84,11 +87,11 @@ function Game(imageRepo) {
         ball.canvasWidth = mainCanvas.width;
         ball.canvasHeight = mainCanvas.height;
 
-        var scoreBoard = new ScoreBoard(0, 0, mainContext);
-        scoreBoard.width = mainCanvas.width;
-        scoreBoard.height = 100;
-        scoreBoard.canvasWidth = mainCanvas.width;
-        scoreBoard.canvasHeight = mainCanvas.height;
+        var scoreBoard = new ScoreBoard(0, 0, scoreContext);
+        scoreBoard.width = scoreCanvas.width;
+        scoreBoard.height = scoreCanvas.height;
+        scoreBoard.canvasWidth = scoreCanvas.width;
+        scoreBoard.canvasHeight = scoreCanvas.height;
 
         var mainScene = new MainScene(ball, paddle, scoreBoard);
 

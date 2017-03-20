@@ -1,9 +1,11 @@
 @font-face {
-  font-family: "press_start";
-  src: url("./assets/PressStart2P.ttf");
+    font-family: "press_start";
+    src: url("./assets/PressStart2P.ttf");
 }
 
+
 /* um canvas em cima do outro */
+
 canvas {
     position: absolute;
     top: 0px;
@@ -11,13 +13,20 @@ canvas {
     background: transparent;
     font-family: "press_start";
 }
+
 #background {
-    z-index: -2;
+    z-index: -3;
     background-color: #000000;
 }
+
+#score {
+    z-index: -2;
+}
+
 #main {
     z-index: -1;
 }
+
 #paddle {
     z-index: 0;
 }
