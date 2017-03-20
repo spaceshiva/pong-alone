@@ -78,7 +78,7 @@ function Ball(x, y, ctx, image, paddle) {
     this.update = function() {
         this.context.clearRect(this.pos.x - 1, this.pos.y - 1, this.width + 2, this.height + 2);
         if (this.state === BALL_STATE.INIT || this.state === BALL_STATE.DEAD) {
-            this.pos.y = getRandom(0, BOUND.MAX_Y);
+            this.pos.y = getRandom(BOUND.MIN_Y, BOUND.MAX_Y);
             this.pos.x = getRandom(BOUND.MAX_X / 2, BOUND.MAX_X);
             this.direction = getRandom(BALL_DIRECTION.UP_LEFT, BALL_DIRECTION.DOWN_RIGHT);
             this.state = BALL_STATE.MOVING;
@@ -119,7 +119,7 @@ function Ball(x, y, ctx, image, paddle) {
                 }
                 return;
             }
-            if (this.pos.y <= 0) {
+            if (this.pos.y <= BOUND.MIN_Y) {
                 if (this.direction === BALL_DIRECTION.UP_LEFT) {
                     this.direction = BALL_DIRECTION.DOWN_LEFT;
                 } else if (this.direction === BALL_DIRECTION.UP_RIGHT) {
@@ -164,8 +164,8 @@ function Paddle(x, y, ctx, image) {
             this.context.clearRect(this.pos.x, this.pos.y, this.width, this.height);
             if (KEY_STATUS.up) {
                 this.pos.y -= this.speed;
-                if (this.pos.y <= 0) {
-                    this.pos.y = 0;
+                if (this.pos.y <= BOUND.MIN_Y) {
+                    this.pos.y = BOUND.MIN_Y;
                 }
             } else {
                 this.pos.y += this.speed;

@@ -37,7 +37,8 @@ const INIT_VAL = {
 
 const BOUND = {
     MAX_X: 480,
-    MAX_Y: 320
+    MAX_Y: 320,
+    MIN_Y: 30
 }
 
 function Game(imageRepo) {
