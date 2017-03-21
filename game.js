@@ -44,6 +44,8 @@ const BOUND = {
 function Game(imageRepo) {
     var assets = imageRepo;
     var self = this;
+    var dtLastFrame;
+
     self.scenes = {
         titleScene: null,
         mainScene: null,
@@ -110,13 +112,10 @@ function Game(imageRepo) {
     }
 
     self.theLoop = function() {
-        self.scenes.mainScene.update();
-        self.scenes.pauseScene.update();
-        self.scenes.gameOverScene.update();
+        var msLastFrame = +new Date - dtLastFrame;
 
-        self.scenes.mainScene.draw();
-        self.scenes.pauseScene.draw();
-        self.scenes.gameOverScene.draw();
+        update(msLastFrame);
+        draw();
 
         if (self.state === STATES.CONTINUE) {
             updateGameState(STATES.PLAYING);
@@ -131,7 +130,20 @@ function Game(imageRepo) {
             reset();
         }
 
+        dtLastFrame = +new Date;
         requestAnimFrame(self.theLoop);
+    }
+
+    function update(msLastFrame) {
+      for(var scene in self.scenes) {
+        self.scenes[scene].update(msLastFrame);
+      }
+    }
+
+    function draw() {
+      for(var scene in self.scenes) {
+        self.scenes[scene].draw();
+      }
     }
 
     function reset() {
