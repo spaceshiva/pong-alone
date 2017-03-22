@@ -41,6 +41,12 @@ const BOUND = {
     MIN_Y: 46
 }
 
+// comprimento da letra true type -> pixels na tela
+const LETTER_W = {
+    "_15" : 8,
+    "_20" : 10
+}
+
 function Game(imageRepo) {
     var assets = imageRepo;
     var self = this;
@@ -113,11 +119,12 @@ function Game(imageRepo) {
         self.scenes = {
             mainScene: mainScene,
             pauseScene: new PauseScene(mainContext, mainCanvas),
-            gameOverScene: new GameOverScene(mainContext, mainCanvas)
+            gameOverScene: new GameOverScene(mainContext, mainCanvas),
+            titleScene: new TitleScene(mainContext, mainCanvas)
         }
 
         reset();
-        updateGameState(STATES.PLAYING);
+        updateGameState(STATES.INIT);
         addPauseHandler();
 
         return true;
@@ -147,8 +154,12 @@ function Game(imageRepo) {
     }
 
     function update(msLastFrame) {
+        var lastState = self.state;
         for (var scene in self.scenes) {
             self.scenes[scene].update(msLastFrame);
+            if(self.scenes[scene].state !== lastState) {
+                updateGameState(self.scenes[scene].state);
+            }
         }
     }
 
@@ -169,9 +180,9 @@ function Game(imageRepo) {
     // a forma "correta" seria a implementação dos listeners de eventos dentro das cenas.
     function updateGameState(state) {
         self.state = state;
-        self.scenes.mainScene.state = state;
-        self.scenes.pauseScene.state = state;
-        self.scenes.gameOverScene.state = state;
+        for (var scene in self.scenes) {
+            self.scenes[scene].state = state;
+        }
     }
 
     /**
