@@ -36,9 +36,9 @@ const INIT_VAL = {
 }
 
 const BOUND = {
-    MAX_X: 480,
-    MAX_Y: 320,
-    MIN_Y: 30
+    MAX_X: 464,
+    MAX_Y: 304,
+    MIN_Y: 46
 }
 
 function Game(imageRepo) {
@@ -68,6 +68,7 @@ function Game(imageRepo) {
 
         var mainContext = mainCanvas.getContext('2d');
         var scoreContext = scoreCanvas.getContext('2d');
+        var bgContext = bgCanvas.getContext('2d');
 
         var paddle = new Paddle(
             assets.paddle.width * 3,
@@ -96,7 +97,18 @@ function Game(imageRepo) {
         scoreBoard.canvasWidth = scoreCanvas.width;
         scoreBoard.canvasHeight = scoreCanvas.height;
 
-        var mainScene = new MainScene(ball, paddle, scoreBoard);
+        var background = new Background(bgContext, assets.bg);
+        background.width = assets.bg.width;
+        background.height = assets.bg.height;
+        background.canvasWidth = bgCanvas.width;
+        background.canvasHeight = bgCanvas.height;
+
+        var mainScene = new MainScene({
+            ball: ball,
+            paddle: paddle,
+            scoreBoard: scoreBoard,
+            bg: background
+        });
 
         self.scenes = {
             mainScene: mainScene,
@@ -135,15 +147,15 @@ function Game(imageRepo) {
     }
 
     function update(msLastFrame) {
-      for(var scene in self.scenes) {
-        self.scenes[scene].update(msLastFrame);
-      }
+        for (var scene in self.scenes) {
+            self.scenes[scene].update(msLastFrame);
+        }
     }
 
     function draw() {
-      for(var scene in self.scenes) {
-        self.scenes[scene].draw();
-      }
+        for (var scene in self.scenes) {
+            self.scenes[scene].draw();
+        }
     }
 
     function reset() {

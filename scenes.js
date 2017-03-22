@@ -4,10 +4,11 @@ function Scene() {
     this.update = function() {}
 }
 
-function MainScene(ball, paddle, scoreBoard) {
-    this.ball = ball;
-    this.paddle = paddle;
-    this.scoreBoard = scoreBoard;
+function MainScene(elements) {
+    this.ball = elements.ball;
+    this.paddle = elements.paddle;
+    this.scoreBoard = elements.scoreBoard;
+    this.bg = elements.bg;
 
     this.update = function() {
         if (this.state !== STATES.PLAYING) {
@@ -17,6 +18,7 @@ function MainScene(ball, paddle, scoreBoard) {
         this.ball.update();
         this.paddle.update();
         this.scoreBoard.update();
+        this.bg.update();
 
         if (this.ball.paddleCollision) {
             this.scoreBoard.addPoints(INIT_VAL.PADDLE_SCORE);
@@ -41,6 +43,7 @@ function MainScene(ball, paddle, scoreBoard) {
         this.ball.draw();
         this.paddle.draw();
         this.scoreBoard.draw();
+        this.bg.draw();
     }
 }
 MainScene.prototype = new Scene();
@@ -49,7 +52,7 @@ function PauseScene(ctx, mainCanvas) {
     this.mainCanvas = mainCanvas;
     this.ctx = ctx;
     var x = (mainCanvas.width / 2) - (8 * 7);
-    var y = mainCanvas.height / 2;
+    var y = (mainCanvas.height / 2) + 15;
     var paused = false;
 
     function clear() {

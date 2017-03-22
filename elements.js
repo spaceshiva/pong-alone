@@ -53,9 +53,9 @@ function ScoreBoard(x, y, ctx) {
         ctx.beginPath();
         ctx.font = "15px press_start";
         ctx.fillStyle = "white";
-        ctx.fillText("SCORE " + this.score, 20, 20);
-        ctx.fillText("LEVEL " + this.level, 190, 20);
-        ctx.fillText("LIVES " + this.lives, 320, 20);
+        ctx.fillText("SCORE " + this.score, 20, 25);
+        ctx.fillText("LEVEL " + this.level, 190, 25);
+        ctx.fillText("LIVES " + this.lives, 320, 25);
     }
     // na atualização do frame, jogamos os pontos acumulados para o placar
     this.update = function() {
@@ -111,7 +111,7 @@ function Ball(x, y, ctx, image, paddle) {
                 this.state = BALL_STATE.DEAD;
                 return;
             }
-            if (this.pos.x >= BOUND.MAX_X) {
+            if (this.pos.x >= (BOUND.MAX_X - this.width)) {
                 if (this.direction === BALL_DIRECTION.UP_RIGHT) {
                     this.direction = BALL_DIRECTION.UP_LEFT;
                 } else if (this.direction === BALL_DIRECTION.DOWN_RIGHT) {
@@ -127,7 +127,7 @@ function Ball(x, y, ctx, image, paddle) {
                 }
                 return;
             }
-            if (this.pos.y >= BOUND.MAX_Y) {
+            if (this.pos.y >= BOUND.MAX_Y - this.height) {
                 if (this.direction === BALL_DIRECTION.DOWN_LEFT) {
                     this.direction = BALL_DIRECTION.UP_LEFT;
                 } else if (this.direction === BALL_DIRECTION.DOWN_RIGHT) {
@@ -153,6 +153,7 @@ Ball.prototype = new Drawable();
 function Paddle(x, y, ctx, image) {
     Drawable.call(this, x, y, ctx);
     this.speed = INIT_VAL.PADDLE_SPEED;
+    const BG_BORDER_H = 16;
 
     this.draw = function() {
         this.context.drawImage(image, this.pos.x, this.pos.y);
@@ -169,11 +170,21 @@ function Paddle(x, y, ctx, image) {
                 }
             } else {
                 this.pos.y += this.speed;
-                if ((this.pos.y + this.height) >= this.canvasHeight) {
-                    this.pos.y = this.canvasHeight - this.height;
+                if ((this.pos.y + this.height) >= this.canvasHeight - BG_BORDER_H) {
+                    this.pos.y = this.canvasHeight - this.height - BG_BORDER_H;
                 }
             }
         }
     }
 }
 Paddle.prototype = new Drawable();
+
+
+function Background(ctx, image) {
+    Drawable.call(this, 0, 30, ctx);
+
+    this.draw = function() {
+        this.context.drawImage(image, this.pos.x, this.pos.y);
+    }
+}
+Background.prototype = new Drawable();

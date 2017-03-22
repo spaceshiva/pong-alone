@@ -6,6 +6,7 @@ function ImageRepository() {
     // atributos
     this.ball = new Image();
     this.paddle = new Image();
+    this.bg = new Image();
     // inicializando
     this.init = function(callback) {
         console.log("Inicializando repositorio de imagens");
@@ -14,7 +15,8 @@ function ImageRepository() {
           a função onload em cada um deles. */
         var imgs = [
             self.ball,
-            self.paddle
+            self.paddle,
+            self.bg
         ];
         var i = 0;
         var numLoaded = 0;
@@ -35,5 +37,6 @@ function ImageRepository() {
         }
         self.ball.src = "assets/ball.gif";
         self.paddle.src = "assets/paddle.png";
+        self.bg.src = "assets/background.png"
     }
 }
