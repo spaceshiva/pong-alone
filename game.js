@@ -180,7 +180,8 @@ function Game(imageRepo) {
     function addPauseHandler() {
         window.addEventListener('keyup', function(e) {
             var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
-            if (keyCode === 80) {
+            // p || space
+            if (keyCode === 80 || keyCode == 32) {
                 if (self.state === STATES.PAUSE) {
                     updateGameState(STATES.PLAYING);
                     console.log("unpause");

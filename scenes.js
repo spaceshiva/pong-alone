@@ -10,7 +10,7 @@ function MainScene(elements) {
     this.scoreBoard = elements.scoreBoard;
     this.bg = elements.bg;
 
-    this.update = function() {
+    this.update = function(msLastFrame) {
         if (this.state !== STATES.PLAYING) {
             return;
         }

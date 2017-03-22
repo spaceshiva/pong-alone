@@ -161,9 +161,9 @@ function Paddle(x, y, ctx, image) {
 
     this.update = function() {
         // reagimos apenas para cima e para baixo
-        if (KEY_STATUS.up || KEY_STATUS.down) {
+        if (KEY_STATUS.up || KEY_STATUS.down || KEY_STATUS.w || KEY_STATUS.s) {
             this.context.clearRect(this.pos.x, this.pos.y, this.width, this.height);
-            if (KEY_STATUS.up) {
+            if (KEY_STATUS.up || KEY_STATUS.w) {
                 this.pos.y -= this.speed;
                 if (this.pos.y <= BOUND.MIN_Y) {
                     this.pos.y = BOUND.MIN_Y;
