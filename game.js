@@ -43,13 +43,13 @@ const LETTER_W = {
 function Game(imageRepo) {
     var assets = imageRepo;
     var self = this;
-    var dtLastFrame;
+    var tsLastFrame;
 
     self.scenes = {
         titleScene: null,
         mainScene: null,
-        pauseScene: null,
-        gameOverScene: null
+        //pauseScene: null,
+        //gameOverScene: null
     }
 
     self.state = STATES.INIT;
@@ -107,42 +107,25 @@ function Game(imageRepo) {
             paddle: paddle,
             scoreBoard: scoreBoard,
             bg: background
-        });
+        }, mainContext, mainCanvas);
 
         self.scenes = {
             mainScene: mainScene,
-            pauseScene: new PauseScene(mainContext, mainCanvas),
-            gameOverScene: new GameOverScene(mainContext, mainCanvas),
+            //pauseScene: new PauseScene(mainContext, mainCanvas),
+            //gameOverScene: new GameOverScene(mainContext, mainCanvas),
             titleScene: new TitleScene(mainContext, mainCanvas)
         }
-
-        reset();
         updateGameState(STATES.INIT);
-        addPauseHandler();
-
         return true;
     }
 
     self.theLoop = function() {
-        var msLastFrame = +new Date - dtLastFrame;
+        var msLastFrame = +new Date - tsLastFrame;
 
         update(msLastFrame);
         draw();
 
-        if (self.state === STATES.CONTINUE) {
-            updateGameState(STATES.PLAYING);
-        }
-
-        if (self.scenes.mainScene.scoreBoard.lives === 0) {
-            updateGameState(STATES.OVER);
-        }
-
-        if (self.scenes.gameOverScene.continue) {
-            updateGameState(STATES.CONTINUE);
-            reset();
-        }
-
-        dtLastFrame = +new Date;
+        tsLastFrame = +new Date;
         requestAnimFrame(self.theLoop);
     }
 
@@ -162,39 +145,15 @@ function Game(imageRepo) {
         }
     }
 
-    function reset() {
-        self.scenes.mainScene.scoreBoard.lives = INIT_VAL.LIVES;
-        self.scenes.mainScene.scoreBoard.score = INIT_VAL.SCORE;
-        self.scenes.mainScene.scoreBoard.level = INIT_VAL.LEVEL;
-        self.scenes.mainScene.ball.speed = INIT_VAL.BALL_SPEED;
-    }
-
     // uma forma de "avisar" as cenas de que o estado mudou
     // a forma "correta" seria a implementação dos listeners de eventos dentro das cenas.
     function updateGameState(state) {
         self.state = state;
+        console.log("Update game state to %d", state);
         for (var scene in self.scenes) {
-            self.scenes[scene].state = state;
+            console.log("Update scene %s state to %d", scene, state);
+            self.scenes[scene].updateState(state);
         }
-    }
-
-    /**
-     * O tratamento do pause deve ser feito de maneira diferenciada do KEY_STATUS
-     */
-    function addPauseHandler() {
-        window.addEventListener('keyup', function(e) {
-            var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
-            // p || space
-            if (keyCode === 80 || keyCode == 32) {
-                if (self.state === STATES.PAUSE) {
-                    updateGameState(STATES.PLAYING);
-                    console.log("unpause");
-                } else if (self.state === STATES.PLAYING) {
-                    updateGameState(STATES.PAUSE);
-                    console.log("pause");
-                }
-            }
-        }, false);
     }
 
 }
@@ -213,7 +172,6 @@ function loadGame() {
         var game = new Game(imageRepo);
         console.log("Game inicializado: %d ms", +new Date - now);
         if (game.init()) {
-            game.state = STATES.PLAYING;
             game.theLoop();
         } else {
             game = null;
