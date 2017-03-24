@@ -13,13 +13,6 @@ const STATES = {
     CONTINUE: 5
 }
 
-const BALL_DIRECTION = {
-    UP_LEFT: 0, // y (-) x (-)
-    UP_RIGHT: 1, // y (-) x (+)
-    DOWN_LEFT: 2, // y (+) x (-)
-    DOWN_RIGHT: 3 // y (+) x (+)
-}
-
 const BALL_STATE = {
     INIT: 0,
     MOVING: 1,

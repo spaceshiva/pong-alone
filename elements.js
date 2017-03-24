@@ -8,6 +8,10 @@ function Drawable(x, y, ctx) {
     this.height = 0;
     this.context = ctx;
 
+    this.checkCollision = function(theOther) {
+        return Vectors.checkCollision(this.pos, this.maxPos(), theOther.pos, theOther.maxPos());
+    }
+
     this.maxPos = function() {
         return new Vectors.Vector(self.pos.x + self.width, self.pos.y + self.height);
     }
@@ -27,9 +31,9 @@ function ScoreBoard(x, y, ctx) {
     this.addPoints = function(pts) {
         if (!isNaN(pts)) {
             this.score += pts;
-            if(this.score > 10000) {
-              this.score = 10000;
-              return;
+            if (this.score > 10000) {
+                this.score = 10000;
+                return;
             }
 
             var nextLevel = parseInt(this.score / 1000, 10) + 1;
@@ -43,8 +47,8 @@ function ScoreBoard(x, y, ctx) {
     this.updateLives = function(lives) {
         if (!isNaN(lives)) {
             this.lives += lives;
-            if(this.lives < 0) {
-              this.lives = 0;
+            if (this.lives < 0) {
+                this.lives = 0;
             }
         }
     }
@@ -68,80 +72,69 @@ ScoreBoard.prototype = new Drawable();
 
 function Ball(x, y, ctx, image, paddle) {
     Drawable.call(this, x, y, ctx);
+
+    var factorY = 1;
+    var factorX = 1;
+    var angle = 0;
+
+    // angulos confortáveis
+    const ANGLES = [40, 45, 50, 55,
+        125, 130, 135, 140, 145,
+        215, 220, 225, 230, 235,
+        305, 310, 315, 320, 325
+    ];
+
     this.paddleCollision = false;
     this.paddle = paddle;
     this.speed = INIT_VAL.BALL_SPEED;
     this.state = BALL_STATE.INIT;
+
+    function genNewAngle() {
+        angle = ANGLES[getRandom(0, ANGLES.length - 1)];
+        console.log("The Angle is %d", angle);
+    }
+
+    genNewAngle();
+
     this.draw = function() {
         this.context.drawImage(image, this.pos.x, this.pos.y);
     }
+
     this.update = function() {
         this.context.clearRect(this.pos.x - 1, this.pos.y - 1, this.width + 2, this.height + 2);
         if (this.state === BALL_STATE.INIT || this.state === BALL_STATE.DEAD) {
-            this.pos.y = getRandom(BOUND.MIN_Y, BOUND.MAX_Y);
-            this.pos.x = getRandom(BOUND.MAX_X / 2, BOUND.MAX_X);
-            this.direction = getRandom(BALL_DIRECTION.UP_LEFT, BALL_DIRECTION.DOWN_RIGHT);
+            this.pos.y = getRandom(BOUND.MIN_Y + this.height, BOUND.MAX_Y - this.height);
+            this.pos.x = getRandom(BOUND.MAX_X / 2, BOUND.MAX_X - this.width);
             this.state = BALL_STATE.MOVING;
         }
         if (this.state === BALL_STATE.MOVING) {
             // moving
-            var v = Vectors.diagonal(45, this.speed);
+            var v = Vectors.diagonal(angle, this.speed);
             this.paddleCollision = false;
+            this.pos.y += v.y * factorY;
+            this.pos.x += v.x * factorX;
 
-            switch (this.direction) {
-                case BALL_DIRECTION.UP_LEFT:
-                    this.pos.y -= v.y;
-                    this.pos.x -= v.x;
-                    break;
-                case BALL_DIRECTION.UP_RIGHT:
-                    this.pos.y -= v.y;
-                    this.pos.x += v.x;
-                    break;
-                case BALL_DIRECTION.DOWN_LEFT:
-                    this.pos.y += v.y;
-                    this.pos.x -= v.x;
-                    break;
-                case BALL_DIRECTION.DOWN_RIGHT:
-                    this.pos.y += v.y;
-                    this.pos.x += v.x;
-                    break;
-            }
             // check boundaries
             if (this.pos.x <= 0) {
                 this.state = BALL_STATE.DEAD;
                 return;
             }
             if (this.pos.x >= (BOUND.MAX_X - this.width)) {
-                if (this.direction === BALL_DIRECTION.UP_RIGHT) {
-                    this.direction = BALL_DIRECTION.UP_LEFT;
-                } else if (this.direction === BALL_DIRECTION.DOWN_RIGHT) {
-                    this.direction = BALL_DIRECTION.DOWN_LEFT;
-                }
+                factorX = (factorX < 0) ? 1 : -1;
                 return;
             }
-            if (this.pos.y <= BOUND.MIN_Y) {
-                if (this.direction === BALL_DIRECTION.UP_LEFT) {
-                    this.direction = BALL_DIRECTION.DOWN_LEFT;
-                } else if (this.direction === BALL_DIRECTION.UP_RIGHT) {
-                    this.direction = BALL_DIRECTION.DOWN_RIGHT;
-                }
-                return;
-            }
-            if (this.pos.y >= BOUND.MAX_Y - this.height) {
-                if (this.direction === BALL_DIRECTION.DOWN_LEFT) {
-                    this.direction = BALL_DIRECTION.UP_LEFT;
-                } else if (this.direction === BALL_DIRECTION.DOWN_RIGHT) {
-                    this.direction = BALL_DIRECTION.UP_RIGHT;
-                }
+            if (this.pos.y <= BOUND.MIN_Y || this.pos.y >= BOUND.MAX_Y - this.height) {
+                factorY = (factorY < 0) ? 1 : -1;
                 return;
             }
             // a checagem mais complicada no fim
-            if (Vectors.checkCollision(this.paddle.pos, this.paddle.maxPos(), this.pos, this.maxPos())) {
+            if (this.checkCollision(this.paddle)) {
                 this.paddleCollision = true;
-                if (this.direction === BALL_DIRECTION.DOWN_LEFT) {
-                    this.direction = BALL_DIRECTION.DOWN_RIGHT;
-                } else if (this.direction === BALL_DIRECTION.UP_LEFT) {
-                    this.direction = BALL_DIRECTION.UP_RIGHT;
+                genNewAngle();
+                if (Vectors.radiansCos(angle) < 0) {
+                    factorX = -1;
+                } else {
+                    factorX = 1;
                 }
                 return;
             }
