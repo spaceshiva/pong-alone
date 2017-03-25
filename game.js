@@ -47,9 +47,7 @@ function Game(imageRepo) {
 
     self.scenes = {
         titleScene: null,
-        mainScene: null,
-        //pauseScene: null,
-        //gameOverScene: null
+        mainScene: null
     }
 
     self.state = STATES.INIT;
